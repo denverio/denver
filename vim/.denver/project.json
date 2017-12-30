@@ -1,0 +1,10 @@
+{
+  "name": "vim",
+  "title": "DVim - Dockerized latest vim from source",
+  "description": "Latest Vim from source (+python +python3 +ruby +lua +perl) with vim-plug over ssh on Alpine Linux.",
+  "features": [
+    "Support for python, python3, ruby, lua, perl",
+    "Built-in vim-plug",
+    "SSHD enabled"
+  ]
+}

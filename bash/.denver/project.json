@@ -1,0 +1,9 @@
+{
+  "name": "bash",
+  "title": "DBash - Dockerized bash on Alpine Linux",
+  "description": "Bash (with bash-it) over ssh on Alpine Linux.",
+  "features": [
+    "Bash-it preconfigured",
+    "SSHD enabled"
+  ]
+}

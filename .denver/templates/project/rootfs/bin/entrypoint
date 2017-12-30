@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+if [ "$1" = 'start' ]
+then
+  shift
+  exec sudo /usr/sbin/sshd -D -e "$@"
+fi
+
+exec "$@"

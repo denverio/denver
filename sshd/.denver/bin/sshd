@@ -1,0 +1,114 @@
+#!/usr/bin/env sh
+
+projectRootPath=$(cd "$(dirname "$0")/../.."; pwd)
+# used in .env file
+realUser=${SUDO_USER:-$USER}
+dockerUser=${DOCKER_ID_USER:-$realUser}
+network=${DE_NETWORK_NAME:-$DE_SSHD_NETWORK_NAME}
+
+denver_sshd_printenv() {
+  printenv | grep -E '^DE_SSHD_'
+  echo
+}
+
+denver_sshd_build() {
+  local argsMsg="without args"
+  [ $# -ne 0 ] && argsMsg="with args $@"
+
+  echo "Building image \
+\"${DE_SSHD_SCOPE}/${DE_SSHD_NAME}\" \
+${argsMsg}..."
+  echo
+
+  sudo docker build \
+    -t ${DE_SSHD_SCOPE}/${DE_SSHD_NAME} \
+    "$@" \
+    $projectRootPath
+
+  return 0
+}
+
+denver_sshd_remove() {
+  echo "Removing image \
+\"${DE_SSHD_SCOPE}/${DE_SSHD_NAME}\"..."
+  echo
+
+  sudo docker image rm \
+    -f ${DE_SSHD_SCOPE}/${DE_SSHD_NAME}
+
+  return 0
+}
+
+denver_sshd_create_network() {
+  sudo docker network create \
+    --driver bridge \
+    ${DE_SSHD_NETWORK_NAME} 2> /dev/null && \
+    echo "Created network \"${DE_SSHD_NETWORK_NAME}\"! Using it..." || \
+    echo "Using network \"${DE_SSHD_NETWORK_NAME}\"..."
+
+  echo
+}
+
+denver_sshd_run() {
+  local cmd=${1:-$DE_SSHD_DEFAULT_COMMAND}
+  [ $# -ne 0 ] && shift
+
+  local argsMsg="without args"
+  [ $# -ne 0 ] && argsMsg="with args $@"
+
+  echo "Running container \
+\"${DE_SSHD_SCOPE}_${DE_SSHD_NAME}\""
+  echo "  based on image \
+\"${DE_SSHD_SCOPE}/${DE_SSHD_NAME}\""
+  echo "  with command \"${cmd}\" ${argsMsg}..."
+  echo
+
+  denver_sshd_create_network
+
+  sudo docker run \
+    -itd \
+    --rm \
+    --name "${DE_SSHD_SCOPE}_${DE_SSHD_NAME}" \
+    --network ${DE_SSHD_NETWORK_NAME} \
+    -h "denver-${DE_SSHD_NAME}" \
+    -p ${DE_SSHD_SSH_PORT}:22 \
+    -v ${DE_SSHD_VOLUME_APP}:/app \
+    -v ${DE_SSHD_VOLUME_WORKSPACE}:/workspace \
+    ${DE_SSHD_SCOPE}/${DE_SSHD_NAME} \
+    ${cmd} \
+    "$@"
+
+  return 0
+}
+
+denver_sshd_stop() {
+  echo "Stopping container \
+\""${DE_SSHD_SCOPE}_${DE_SSHD_NAME}"\"..."
+  echo
+
+  sudo docker container stop \
+    "${DE_SSHD_SCOPE}_${DE_SSHD_NAME}"
+
+  return 0
+}
+
+denver_sshd_main() {
+  local runner=${1:-"run"}
+
+  if [ -s "$projectRootPath/.env" ] 
+  then
+    eval $(env $(cat "$projectRootPath/.env"; env) | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
+  fi
+
+  [ "$runner" != 'printenv' ] &&
+    denver_sshd_printenv
+
+  {
+    [ $# -ne 0 ] && shift
+    denver_sshd_${runner} "$@" 2>/dev/null
+  } || denver_sshd_run $runner "$@"
+
+  return 0
+}
+denver_sshd_main "$@"
+

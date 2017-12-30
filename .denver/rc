@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+
+export DENVER_HOME=$(cd "$(dirname "$0")/.."; pwd)
+export DENVER_BIN_PATH="$DENVER_HOME/.denver/bin"
+denver="$DENVER_BIN_PATH/denver"
+
+denver_plop_message() {
+  echo
+  echo 'Please, install `plop` globally:'
+  echo '  npm install -g plop'
+  echo
+}
+
+denver_plop() {
+  {
+    env sh -c -e "cd $DENVER_HOME; plop $(echo "$@")" 2> /dev/null
+  } || {
+    [ "$(command -v plop)" = '' ] && denver_plop_message
+    return 0
+  }
+}
+
+denver_create() {
+  denver_plop project "$@"
+}
+
+denver_update() {
+  denver_plop update "$@"
+}
+
+denver() {
+  local runner="$1"
+
+  {
+    [ $# -ne 0 ] && shift
+    denver_${runner} "$@" 2>/dev/null
+  } || env sh $denver $runner "$@"
+}

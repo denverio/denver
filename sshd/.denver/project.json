@@ -1,0 +1,8 @@
+{
+  "name": "sshd",
+  "title": "DSshd - Dockerized minimal sshd on Alpine Linux",
+  "description": "Minimal sshd on Alpine Linux.",
+  "sshd": true,
+  "features": []
+}
+
