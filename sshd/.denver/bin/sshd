@@ -66,7 +66,7 @@ denver_sshd_run() {
   denver_sshd_create_network
 
   sudo docker run \
-    -itd \
+    -it \
     --rm \
     --name "${DE_SSHD_SCOPE}_${DE_SSHD_NAME}" \
     --network ${DE_SSHD_NETWORK_NAME} \
@@ -97,7 +97,7 @@ denver_sshd_main() {
 
   if [ -s "$projectRootPath/.env" ] 
   then
-    eval $(env $(cat "$projectRootPath/.env"; env) | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
+    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
   fi
 
   [ "$runner" != 'printenv' ] &&
