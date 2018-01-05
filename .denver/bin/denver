@@ -16,7 +16,7 @@ denver_main() {
 
   if [ -s "$DENVER_HOME/.env" ] 
   then
-    eval $(env "$(cat "$DENVER_HOME/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
+    eval $(env "$(cat "$DENVER_HOME/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^\(.\+=\)\("\?\)\([^"$]\+\)\("\?\)$/export \1"\3"/')
   fi
 
   env sh -c "$projectCommand $(echo "$@")"

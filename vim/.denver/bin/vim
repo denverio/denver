@@ -5,6 +5,7 @@ projectRootPath=$(cd "$(dirname "$0")/../.."; pwd)
 realUser=${SUDO_USER:-$USER}
 dockerUser=${DOCKER_ID_USER:-$realUser}
 network=${DE_NETWORK_NAME:-$DE_VIM_NETWORK_NAME}
+runArgs="${DE_VIM_RUN_ARGS} ${DE_RUN_ARGS}"
 
 denver_vim_printenv() {
   printenv | grep -E '^DE_VIM_'
@@ -74,6 +75,7 @@ denver_vim_run() {
     -p ${DE_VIM_SSH_PORT}:22 \
     -v ${DE_VIM_VOLUME_APP}:/app \
     -v ${DE_VIM_VOLUME_WORKSPACE}:/workspace \
+    ${DE_VIM_RUN_ARGS} \
     ${DE_VIM_SCOPE}/${DE_VIM_NAME} \
     ${cmd} \
     "$@"
@@ -97,7 +99,7 @@ denver_vim_main() {
 
   if [ -s "$projectRootPath/.env" ] 
   then
-    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
+    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^\(.\+=\)\("\?\)\([^"$]\+\)\("\?\)$/export \1"\3"/')
   fi
 
   [ "$runner" != 'printenv' ] &&

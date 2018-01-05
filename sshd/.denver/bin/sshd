@@ -5,6 +5,7 @@ projectRootPath=$(cd "$(dirname "$0")/../.."; pwd)
 realUser=${SUDO_USER:-$USER}
 dockerUser=${DOCKER_ID_USER:-$realUser}
 network=${DE_NETWORK_NAME:-$DE_SSHD_NETWORK_NAME}
+runArgs="${DE_SSHD_RUN_ARGS} ${DE_RUN_ARGS}"
 
 denver_sshd_printenv() {
   printenv | grep -E '^DE_SSHD_'
@@ -74,6 +75,7 @@ denver_sshd_run() {
     -p ${DE_SSHD_SSH_PORT}:22 \
     -v ${DE_SSHD_VOLUME_APP}:/app \
     -v ${DE_SSHD_VOLUME_WORKSPACE}:/workspace \
+    ${DE_SSHD_RUN_ARGS} \
     ${DE_SSHD_SCOPE}/${DE_SSHD_NAME} \
     ${cmd} \
     "$@"
@@ -97,7 +99,7 @@ denver_sshd_main() {
 
   if [ -s "$projectRootPath/.env" ] 
   then
-    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
+    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^\(.\+=\)\("\?\)\([^"$]\+\)\("\?\)$/export \1"\3"/')
   fi
 
   [ "$runner" != 'printenv' ] &&

@@ -1,9 +1,11 @@
 #!/usr/bin/env sh
 
-if [ "$1" = 'start' ]
+command=$1
+[ $# -ne 0 ] && shift
+
+if [ "$command" = 'start' ]
 then
-  shift
   exec sudo /usr/sbin/sshd -D -e "$@"
 fi
 
-exec "$@"
+exec "$command" "$@"

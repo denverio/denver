@@ -5,6 +5,7 @@ projectRootPath=$(cd "$(dirname "$0")/../.."; pwd)
 realUser=${SUDO_USER:-$USER}
 dockerUser=${DOCKER_ID_USER:-$realUser}
 network=${DE_NETWORK_NAME:-$DE_ENV_NETWORK_NAME}
+runArgs="${DE_ENV_RUN_ARGS} ${DE_RUN_ARGS}"
 
 denver_env_printenv() {
   printenv | grep -E '^DE_ENV_'
@@ -74,6 +75,7 @@ denver_env_run() {
     -p ${DE_ENV_SSH_PORT}:22 \
     -v ${DE_ENV_VOLUME_APP}:/app \
     -v ${DE_ENV_VOLUME_WORKSPACE}:/workspace \
+    ${DE_ENV_RUN_ARGS} \
     ${DE_ENV_SCOPE}/${DE_ENV_NAME} \
     ${cmd} \
     "$@"
@@ -97,7 +99,7 @@ denver_env_main() {
 
   if [ -s "$projectRootPath/.env" ] 
   then
-    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^/export /')
+    eval $(env "$(cat "$projectRootPath/.env"; env)" | grep -E '^(DE_|DOCKER_)' | sed 's/^\(.\+=\)\("\?\)\([^"$]\+\)\("\?\)$/export \1"\3"/')
   fi
 
   [ "$runner" != 'printenv' ] &&
