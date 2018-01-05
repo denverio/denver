@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+command=$1
+[ $# -ne 0 ] && shift
+
+if [ "$command" = 'start' ]
+then
+  exec sudo /usr/sbin/sshd -D -e "$@"
+fi
+
+if [ "$command" = '' ] || [ "$command" = 'nginx' ]
+then
+  exec sudo nginx -g "daemon off;" "$@"
+fi
+
+exec "$command" "$@"

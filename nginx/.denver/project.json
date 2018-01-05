@@ -1,0 +1,8 @@
+{
+  "name": "nginx",
+  "title": "DNginx - Dockerized nginx server",
+  "description": "Nginx with CA and ssh on Alpine Linux",
+  "features": [
+    "SSHD enabled"
+  ]
+}
