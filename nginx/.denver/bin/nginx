@@ -6,6 +6,7 @@ realUser=${SUDO_USER:-$USER}
 dockerUser=${DOCKER_ID_USER:-$realUser}
 network=${DE_NETWORK_NAME:-$DE_NGINX_NETWORK_NAME}
 runArgs="${DE_NGINX_RUN_ARGS} ${DE_RUN_ARGS}"
+rootVolumeApp=${DE_ROOT_VOLUME_APP:-$HOME}
 
 denver_nginx_printenv() {
   printenv | grep -E '^DE_NGINX_'

@@ -3,19 +3,24 @@ COPY rootfs/local.ca.ext /local.ca.ext
 RUN \
   mkdir /certs && \
   apk add --no-cache openssl && \
-  openssl genrsa -out /tmp/my.ca.key 2048 && \
+  openssl rand -base64 48 > /tmp/passphrase.txt && \
+  openssl genrsa -des3 \
+    -passout file:/tmp/passphrase.txt \
+    -out /tmp/my.ca.key 2048 && \
   openssl req -x509 -new -nodes -sha256 \
     -days 3650 \
+    -passin file:/tmp/passphrase.txt \
     -key /tmp/my.ca.key \
     -out /certs/my.ca.pem \
-    -subj "/C=BR/ST=State/L=City/O=Local Dev Inc/OU=Dev/CN=Local Dev" && \
+    -subj "/C=BR/ST=State/L=City/O=LocalDev Inc/OU=Dev/CN=LocalDev" && \
   openssl genrsa -out /certs/local.ca.key 2048 && \
   openssl req -new \
     -key /certs/local.ca.key \
     -out /certs/local.ca.csr \
-    -subj "/C=BR/ST=State/L=City/O=Local Dev Inc/OU=Dev/CN=Local Dev Sites" && \
+    -subj "/C=BR/ST=State/L=City/O=LocalDev Inc/OU=Dev/CN=LocalDev Sites" && \
   openssl x509 -req -sha256 \
     -days 3650 \
+    -passin file:/tmp/passphrase.txt \
     -in /certs/local.ca.csr \
     -out /certs/local.ca.crt \
     -CA /certs/my.ca.pem \

@@ -6,6 +6,7 @@ realUser=${SUDO_USER:-$USER}
 dockerUser=${DOCKER_ID_USER:-$realUser}
 network=${DE_NETWORK_NAME:-$DE_ENV_NETWORK_NAME}
 runArgs="${DE_ENV_RUN_ARGS} ${DE_RUN_ARGS}"
+rootVolumeApp=${DE_ROOT_VOLUME_APP:-$HOME}
 
 denver_env_printenv() {
   printenv | grep -E '^DE_ENV_'

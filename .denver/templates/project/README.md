@@ -77,7 +77,7 @@ DE_{{constantCase name}}_NETWORK_NAME=${DE_NETWORK_NAME:-"denver_net"}
 DE_{{constantCase name}}_SCOPE=${DOCKER_ID_USER:-$USER}
 DE_{{constantCase name}}_NAME={{snakeCase name}}
 DE_{{constantCase name}}_SSH_PORT=2222
-DE_{{constantCase name}}_VOLUME_APP="$HOME/.{{dashCase name}}"
+DE_{{constantCase name}}_VOLUME_APP="${DE_ROOT_VOLUME_APP:-$HOME}/{{dashCase name}}"
 DE_{{constantCase name}}_VOLUME_WORKSPACE="$HOME/workspace"
 DE_{{constantCase name}}_DEFAULT_COMMAND={{snakeCase name}}
 ```
