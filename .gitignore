@@ -30,3 +30,7 @@
 !nginx
 !nginx/**/*
 !nginx/**/.*
+
+!ca
+!ca/**/*
+!ca/**/.*

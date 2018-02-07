@@ -1,0 +1,7 @@
+{
+  "name": "ca",
+  "title": "DCa - Dockerized Certificate Authority Generator",
+  "description": "Generates Certificate Authority",
+  "features": [
+  ]
+}

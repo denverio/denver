@@ -1,0 +1,43 @@
+#!/usr/bin/env sh
+
+command=$1
+[ $# -ne 0 ] && shift
+
+# User defined ext file
+[ -s "/app/ca.ext" ] && caExtFile="/app/ca.ext"
+
+if [ "$command" = 'generate' ]
+then
+  # Use default ext file if is not defined
+  caExtFile=${caExtFile:-"/default.ca.ext"}
+
+  # Gen site key
+  rm /app/site.ca.key 2> /dev/null
+  openssl genrsa -out /app/site.ca.key 2048
+
+  # Gen temporary site csr
+  openssl req -new \
+    -key /app/site.ca.key \
+    -out /tmp/site.ca.csr \
+    -subj "/C=BR/ST=Sao Paulo/L=Sao Paulo/O=LocalDev Inc/OU=Dev/CN=LocalDev Sites"
+
+  # Gen site certificate
+  rm /app/site.ca.crt 2> /dev/null
+  openssl x509 -req -sha256 \
+    -days 3650 \
+    -passin file:/passphrase.txt \
+    -in /tmp/site.ca.csr \
+    -out /app/site.ca.crt \
+    -CA /ca.pem \
+    -CAkey /ca.key \
+    -CAcreateserial \
+    -extfile "${caExtFile}"
+
+  # Copy ca.pem
+  rm /app/ca.pem 2> /dev/null
+  mv /ca.pem /app/ca.pem
+
+  exit 0
+fi
+
+exec "$command" "$@"
