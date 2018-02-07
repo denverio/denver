@@ -21,6 +21,12 @@ export DENVER_HOME="$HOME/denver"
 [ -s "$DENVER_HOME/.denver/rc" ] && source $DENVER_HOME/.denver/rc
 ```
 
+Use the `.env.example` file to create `.env` file. Then, edit `.env` with your
+configs.
+
+```shell
+cp .env.example .env
+```
 
 ## Use
 
