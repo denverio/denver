@@ -9,7 +9,8 @@ _Create development environments quickly using docker._
 ## Dependencies
 
 - [Docker](https://www.docker.com/)
-- [PLOP](https://plopjs.com/)
+- [PLOP](https://plopjs.com/) (only to creates/update a new dockerized project 
+based on pre defined template)
 
 
 ## Install
