@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-export DENVER_HOME=$(cd "$(dirname "$0")/.."; pwd)
+#export DENVER_HOME=$(cd "$(dirname "$0")/.."; pwd)
 export DENVER_BIN_PATH="$DENVER_HOME/.denver/bin"
 denver="$DENVER_BIN_PATH/denver"
 
