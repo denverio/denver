@@ -3,6 +3,7 @@
 
 !.env.example
 !.gitignore
+!install.sh
 !plopfile.js
 !README.md
 !UNLICENSE

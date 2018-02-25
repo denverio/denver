@@ -6,6 +6,18 @@ _Create development environments quickly using docker._
 > Probably not! But God automates some things.
 
 
+## Installing via script
+
+```shell
+wget -qO- \
+  https://raw.githubusercontent.com/fiuzagr/denver/master/install.sh | \
+  env \
+    DENVER_HOME="$HOME/Workspace/denver" \
+    DENVER_BRANCH=master \
+    sh
+```
+
+
 ## Dependencies
 
 - [Docker](https://www.docker.com/)
