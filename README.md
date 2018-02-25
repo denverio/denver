@@ -12,7 +12,7 @@ _Create development environments quickly using docker._
 wget -qO- \
   https://raw.githubusercontent.com/fiuzagr/denver/master/install.sh | \
   env \
-    DENVER_HOME="$HOME/Workspace/denver" \
+    DENVER_HOME="$HOME/workspace/denver" \
     DENVER_BRANCH=master \
     sh
 ```
