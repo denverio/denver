@@ -1,9 +1,6 @@
-# DEnver - Docker "Environmentizer"
+# Denver
 
-_Create development environments quickly using docker._
-
-> Denver is a God. **Is God a programmer?**
-> Probably not! But God automates some things.
+_Creates development environment quickly using docker._
 
 
 ## Installing via script (Ubuntu only)
@@ -28,7 +25,7 @@ wget -qO- \
 Clone this repository and insert the code below into your `.bashrc` or `.zshrc`.
 
 ```shell
-export DENVER_HOME="$HOME/.denver"
+export DENVER_HOME="$HOME/workdir/denver"
 [ -s "$DENVER_HOME/.denver/denver.sh" ] && \. $DENVER_HOME/.denver/denver.sh
 ```
 

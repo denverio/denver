@@ -28,7 +28,7 @@ RUN \
 # force command on ssh login
   printf "\n\
 Match all\n\
-  ForceCommand env sh -c -e \"source /etc/profile; cd /workdir; zsh\"\n\
+  ForceCommand env sh -c -e \"cd /workdir; zsh\"\n\
 " | tee -a /etc/ssh/sshd_config
 
 USER 1000
