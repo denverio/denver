@@ -2,6 +2,8 @@
 
 { # this ensures the entire script is downloaded # 
 
+denverInstallDir="$HOME"
+
 denver_install_settings() { 
   denver_install_section "Configuring..." 
 
@@ -18,6 +20,8 @@ denver_install_settings() {
     echo
     exit 1
   fi
+
+  denverInstallDir="$(cd "$DENVER_HOME/.."; pwd)"
 
   echo "Configured:"
   echo "  DENVER_HOME=$DENVER_HOME"
@@ -83,7 +87,7 @@ denver_install_env() {
   wget -qO- \
     https://raw.githubusercontent.com/fiuzagr/env/v2/install.sh | \
     env \
-      ENV_HOME="$(cd "$DENVER_HOME/.."; pwd)/.env" \
+      ENV_HOME="$denverInstallDir/.env" \
       ENV_BRANCH=v2 \
       sh
 }
@@ -124,7 +128,7 @@ denver_install_denver() {
 
         echo "\n# Denver" | tee -a "$rcFile"
         echo "export DENVER_HOME=\"$DENVER_HOME\"" | tee -a "$rcFile"
-        echo '[ -s "$DENVER_HOME/.denver/rc" ] && source $DENVER_HOME/.denver/rc' | tee -a "$rcFile"
+        echo '[ -s "$DENVER_HOME/.denver/denver.sh" ] && \. $DENVER_HOME/.denver/denver.sh' | tee -a "$rcFile"
       }
   fi
 

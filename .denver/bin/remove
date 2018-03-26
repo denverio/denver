@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+# include denver
+. "$DENVER_RC"
+
+denver_remove() {
+  local project=$(denver util snake ${1})
+  [ $# -ne 0 ] && shift
+
+  # stop container before remove image
+  denver stop ${project} || echo ''
+
+  echo "Removing image \"denver/${project}\"..."
+  echo
+
+  {
+    sudo docker image rm -f denver/${project} 2>/dev/null
+    echo
+  } || return
+}
+denver_remove "$@"
+

@@ -30,7 +30,6 @@ ENV PACKAGES="\
 "
 
 RUN \
-  sed -i -e 's/dl-cdn/dl-4/' /etc/apk/repositories && \
   apk add --no-cache ${PACKAGES} && \
 # install fpm
   gem update --no-ri --no-rdoc --system && \
@@ -94,25 +93,26 @@ RUN \
     . && \
   mv *.apk /
 
-FROM denverio/env:latest
+FROM denver/base:latest
 MAINTAINER Fiuza <fiuzagr@gmail.com>
-LABEL description="Latest Vim from source (+python +python3 +ruby +lua +perl) with vim-plug over ssh on Alpine Linux"
+LABEL description="Latest Vim from source (+python +python3 +ruby +lua +perl) with vim-plug on Alpine Linux"
 ENTRYPOINT ["/bin/vim_entrypoint"]
+
+USER 0
 COPY rootfs /
 COPY --from=builder /vim*.apk /tmp/vim.apk
 
-ENV DE_VIM_VERSION 0.0.1
-
 RUN \
 # install vim package
-  sudo apk add --no-cache --allow-untrusted /tmp/vim.apk && \
-# install user .vimrc file
-  sudo mv /.vimrc ${DE_ENV_HOME}/.vimrc && \
-  sudo chown ${DE_ENV_USER}:${DE_ENV_USER} ${DE_ENV_HOME}/.vimrc && \
-# ensures env variables on ssh login
-  env | sed -En "s/^(DE_VIM_)/export\ \1/p" | sudo tee -a /etc/profile && \
+  apk add --no-cache --allow-untrusted /tmp/vim.apk && \
+# create .vimrc file
+  ln -s /.vimrc /home/denver/.vimrc && \
+  ln -s /.vimrc /root/.vimrc && \
 # force command on ssh login
   printf "\n\
-Match User ${DE_ENV_USER}\n\
-  ForceCommand env sh -c -e \"source /etc/profile; vim\"\n\
-" | sudo tee -a /etc/ssh/sshd_config
+Match all\n\
+  ForceCommand env sh -c -e \"source /etc/profile; cd /workdir; vim\"\n\
+" | tee -a /etc/ssh/sshd_config
+
+USER 1000
+WORKDIR /workdir

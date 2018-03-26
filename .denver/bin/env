@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+denver_env() {
+  if [ -s "$DENVER_HOME/.env" ] 
+  then
+    eval $(env "$(cat "$DENVER_HOME/.env"; env)" \
+      | grep -E '^(DE_|DOCKER_)' \
+      | sed 's/^\(.\+=\)\("\?\)\([^"]*\)\("\?\)$/export \1"\3"/')
+  fi
+
+  exec $file "$@"
+}
+denver_env "$@"
+

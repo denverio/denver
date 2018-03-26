@@ -1,0 +1,63 @@
+#!/usr/bin/env sh
+
+# include denver
+. "$DENVER_RC"
+
+network="denver_net"
+
+denver_create_network() {
+  sudo docker network create \
+    --driver bridge \
+    --subnet=172.66.6.0/24 \
+    ${network} 2> /dev/null && \
+    echo "Created network \"${network}\"! Using it..." || \
+    echo "Using network \"${network}\"..."
+
+  echo
+}
+
+denver_run() {
+  local project=$(denver util snake ${1})
+  [ $# -ne 0 ] && shift
+
+  local defaultCommand="$(denver var ${project} default-command)"
+  local sshPort="$(denver var ${project} ssh-port)"
+  local volumeApp="$(denver var ${project} volume-app)"
+  local volumeWorkdir="$(denver var ${project} volume-workdir)"
+  local runArgs="$(denver var ${project} run-args)"
+
+  local cmd=${1:-${defaultCommand:-$project}}
+  [ $# -ne 0 ] && shift
+
+  local argsMsg="without args"
+  [ $# -ne 0 ] && argsMsg="with args $@"
+
+  # print environment for project
+  denver printenv ${project}
+
+  echo "Running container \"${project}.denver\""
+  echo "  based on image \"denver/${project}\""
+  echo "  with command \"${cmd}\" ${argsMsg}..."
+  echo
+
+  denver_create_network
+
+  # TODO insert args only if is defined
+  sudo docker run \
+    -it \
+    --rm \
+    --privileged \
+    --name "${project}.denver" \
+    --network ${network} \
+    -h "${project}.denver" \
+    -p ${sshPort}:22 \
+    -v ${volumeApp:-"$(denver var root-volume-app)/${project}"}:/app \
+    -v ${volumeWorkdir}:/workdir \
+    ${runArgs} \
+    ${DE_RUN_ARGS} \
+    denver/${project} \
+    ${cmd} \
+    "$@"
+}
+denver_run "$@"
+

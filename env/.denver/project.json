@@ -1,8 +1,0 @@
-{
-  "name": "env",
-  "title": "DEnv - Dockerized environment settings on Alpine Linux",
-  "description": "Env settings over ssh on Alpine Linux.",
-  "features": [
-    "SSHD enabled"
-  ]
-}

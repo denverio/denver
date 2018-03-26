@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# include dependencies
+. "$DENVER_RC"
+
+_echo_var() {
+  local var="DE_$(denver util upper $(denver util snake "$@"))"
+  local testVar="$(env | grep -E "^$var")"
+
+  if [ -n "$testVar" ]
+  then
+    # eval only environment variables
+    eval echo \"'$'$var\"
+    return 0
+  fi
+
+  return 1
+}
+
+denver_var() {
+  local project=$(denver util snake ${1})
+  [ $# -ne 0 ] && shift
+
+  _echo_var ${project} ${@} || _echo_var ${@} || return 0
+}
+denver_var "$@"

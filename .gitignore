@@ -4,7 +4,6 @@
 !.env.example
 !.gitignore
 !install.sh
-!plopfile.js
 !README.md
 !UNLICENSE
 
@@ -12,17 +11,9 @@
 !.denver/**/*
 !.denver/**/.*
 
-!sshd
-!sshd/**/*
-!sshd/**/.*
-
-!env
-!env/**/*
-!env/**/.*
-
-!bash
-!bash/**/*
-!bash/**/.*
+!base
+!base/**/*
+!base/**/.*
 
 !vim
 !vim/**/*
@@ -35,3 +26,15 @@
 !ca
 !ca/**/*
 !ca/**/.*
+
+!tmux
+!tmux/**/*
+!tmux/**/.*
+
+!zsh
+!zsh/**/*
+!zsh/**/.*
+
+!node
+!node/**/*
+!node/**/.*

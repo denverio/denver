@@ -6,13 +6,13 @@ _Create development environments quickly using docker._
 > Probably not! But God automates some things.
 
 
-## Installing via script
+## Installing via script (Ubuntu only)
 
 ```shell
 wget -qO- \
   https://raw.githubusercontent.com/fiuzagr/denver/master/install.sh | \
   env \
-    DENVER_HOME="$HOME/workspace/denver" \
+    DENVER_HOME="$HOME/workdir/denver" \
     DENVER_BRANCH=master \
     sh
 ```
@@ -21,8 +21,6 @@ wget -qO- \
 ## Dependencies
 
 - [Docker](https://www.docker.com/)
-- [PLOP](https://plopjs.com/) (only to create/update a new dockerized project 
-based on pre defined template)
 
 
 ## Install
@@ -30,8 +28,8 @@ based on pre defined template)
 Clone this repository and insert the code below into your `.bashrc` or `.zshrc`.
 
 ```shell
-export DENVER_HOME="$HOME/denver"
-[ -s "$DENVER_HOME/.denver/rc" ] && source $DENVER_HOME/.denver/rc
+export DENVER_HOME="$HOME/.denver"
+[ -s "$DENVER_HOME/.denver/denver.sh" ] && \. $DENVER_HOME/.denver/denver.sh
 ```
 
 Use the `.env.example` file to create `.env` file. Then, edit `.env` with your
@@ -43,53 +41,38 @@ cp .env.example .env
 
 ## Use
 
-### Create a project
+### Build project
 
 ```shell
-denver create <project-name> '"Project title"' '"Project description"'
+denver build <project-name> [<build args>]
 ```
 
-### Update a project
+### Run project
 
 ```shell
-denver update <project-name>
+denver <project-name> [<command>]
 ```
 
-### Build a project
+### Start project ssh
 
 ```shell
-denver <project-name> build
+denver start <project-name> <github-user> [<another-github-user>...]
 ```
 
-### Run a project
+### Stop project container
 
 ```shell
-denver <project-name>
+denver stop <project-name>
 ```
 
-### Start sshd on project
+### Remove project image
 
 ```shell
-denver <project-name> start
+denver remove <project-name>
 ```
 
-### Stop sshd on project
+### Print configured environment
 
 ```shell
-denver <project-name> stop
-```
-
-
-## Know issues
-
-### Create project with spaced string arguments
-
-This isn't work at now:
-```shell
-denver create <project-name> "Project title" "Project description"
-```
-
-This work (use single and double quotes together):
-```shell
-denver create <project-name> '"Project title"' '"Project description"'
+denver printenv [<project-name>]
 ```

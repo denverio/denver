@@ -1,9 +1,0 @@
-#!/bin/ash
-
-if [ "$1" = 'start' ]
-then
-  shift
-  exec /usr/sbin/sshd -D -e "$@"
-fi
-
-exec "$@"

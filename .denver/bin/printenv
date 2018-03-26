@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+# include dependencies
+. "$DENVER_RC"
+
+denver_printenv() {
+  local filter=$(denver util upper "$@" | tr ' ' '|')
+  printenv | grep -E "^DE_($filter)"
+  echo
+}
+denver_printenv "$@"
+

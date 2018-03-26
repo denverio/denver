@@ -4,10 +4,6 @@ LABEL description="Generates Certificate Authority"
 ENTRYPOINT ["/bin/ca_entrypoint"]
 COPY rootfs /
 
-ARG ROOT_PASS
-
-ENV DE_CA_VERSION 0.0.1
-
 RUN \
   apk add --no-cache openssl && \
   # Prepare root

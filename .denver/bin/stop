@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+# include denver
+. "$DENVER_RC"
+
+denver_stop() {
+  local project=$(denver util snake ${1})
+  [ $# -ne 0 ] && shift
+
+  echo "Stopping container \""${project}.denver"\"..."
+  echo
+
+  {
+    sudo docker container stop "${project}.denver" 2>/dev/null
+    echo
+  } || return
+}
+denver_stop "$@"
+

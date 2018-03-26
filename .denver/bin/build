@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# include denver
+. "$DENVER_RC"
+
+denver_build() {
+  local project=$(denver util snake ${1})
+  local projectPath="${DENVER_HOME}/$(denver util dash ${1})"
+  [ $# -ne 0 ] && shift
+
+  local argsMsg="without args"
+  [ $# -ne 0 ] && argsMsg="with args \"$@\""
+
+  # remove image before build
+  denver remove ${project} || echo ''
+
+  echo "Building image \"denver/${project}\" ${argsMsg}..."
+  echo
+
+  sudo docker build \
+    -t denver/${project} \
+    ${@} \
+    ${projectPath}
+}
+denver_build "$@"
+

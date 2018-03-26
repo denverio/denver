@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+
+denver_util_upper() {
+  echo "${@}" | tr '[a-z]' '[A-Z]'
+}
+
+denver_util_lower() {
+  echo "${@}" | tr '[A-Z]' '[a-z]'
+}
+
+denver_util_snake() {
+  denver_util_lower "${@}" | tr '-' '_' | tr ' ' '_'
+}
+
+denver_util_dash() {
+  denver_util_lower "${@}" | tr '_' '-' | tr ' ' '-'
+}
+
+denver_util() {
+  local command=$(denver_util_snake "$1")
+
+  [ $# -ne 0 ] && shift
+
+  denver_util_${command} "$@"
+}
+denver_util "$@"
+

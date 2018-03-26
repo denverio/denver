@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# include denver
+. "$DENVER_RC"
+
+denver_start() {
+  local project=$(denver util snake ${1})
+  [ $# -ne 0 ] && shift
+
+  # run detached command start
+  export DE_RUN_ARGS="-d" 
+  denver run ${project} start "${@}"
+}
+denver_start "$@"
+

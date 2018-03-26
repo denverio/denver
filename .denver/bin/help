@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+denver_help() {
+  echo 'help';
+
+  exit 0
+}
+denver_help "$@"
+
