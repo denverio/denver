@@ -113,6 +113,7 @@ RUN \
 # user permission
   chown -R 1000:1000 "${NON_ROOT_HOME}" && \
 # cleanup
+  rm -rf /tmp/vim.apk && \
   apk del build-deps
 
 USER 1000

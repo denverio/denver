@@ -24,7 +24,7 @@ RUN \
     tzdata && \
 # denver dependencies
   apk add --no-cache --virtual denver-dep \
-    curl openssh findutils grep bash zsh tmux jq git && \
+    curl openssh findutils diffutils grep bash zsh tmux jq git && \
 # configure ssh
   ssh-keygen -A && \
 # configure timezone
@@ -66,12 +66,14 @@ ENV USER=${NON_ROOT} \
     HOME=${NON_ROOT_HOME} \
     TERM=xterm-256color \
     DENVER_HOME="/denver" \
-    DENVER_CONFIG="${DENVER_HOME}/.config"
+    DENVER_CONFIG="/denver/.config"
 
 RUN \
 # user configs
   git config --global user.name "${GIT_USER_NAME}" && \
   git config --global user.email "${GIT_USER_EMAIL}" && \
+  git config --global init.templatedir "${DENVER_CONFIG}/git/git_template" && \
+  git config --global core.excludesfile "${DENVER_CONFIG}/git/.gitignore" && \
   git config --global include.path "${DENVER_CONFIG}/git/.gitconfig"
 
 VOLUME ["/denver", "/workdir"]
