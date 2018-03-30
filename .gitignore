@@ -3,38 +3,15 @@
 
 !.env.example
 !.gitignore
+!denver.sh
 !install.sh
 !README.md
 !UNLICENSE
 
-!.denver
-!.denver/**/*
-!.denver/**/.*
+!bin
+!bin/**/*
+!bin/**/.*
 
-!base
-!base/**/*
-!base/**/.*
-
-!vim
-!vim/**/*
-!vim/**/.*
-
-!nginx
-!nginx/**/*
-!nginx/**/.*
-
-!ca
-!ca/**/*
-!ca/**/.*
-
-!tmux
-!tmux/**/*
-!tmux/**/.*
-
-!zsh
-!zsh/**/*
-!zsh/**/.*
-
-!node
-!node/**/*
-!node/**/.*
+!projects
+!projects/**/*
+!projects/**/.*

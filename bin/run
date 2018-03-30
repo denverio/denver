@@ -26,7 +26,7 @@ denver_run() {
   local volumeWorkdir="$(denver var ${project} volume-workdir)"
   local runArgs="$(denver var ${project} run-args)"
 
-  local cmd=${1:-${defaultCommand:-$project}}
+  local cmd=${1:-$defaultCommand}
   [ $# -ne 0 ] && shift
 
   local argsMsg="without args"
@@ -46,12 +46,11 @@ denver_run() {
   sudo docker run \
     -it \
     --rm \
-    --privileged \
     --name "${project}.denver" \
     --network ${network} \
     -h "${project}.denver" \
     -p ${sshPort}:22 \
-    -v ${volumeApp:-"$(denver var root-volume-app)/${project}"}:/app \
+    -v ${DENVER_HOME}:/denver \
     -v ${volumeWorkdir}:/workdir \
     ${runArgs} \
     ${DE_RUN_ARGS} \

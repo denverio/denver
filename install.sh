@@ -2,8 +2,6 @@
 
 { # this ensures the entire script is downloaded # 
 
-denverInstallDir="$HOME"
-
 denver_install_settings() { 
   denver_install_section "Configuring..." 
 
@@ -20,8 +18,6 @@ denver_install_settings() {
     echo
     exit 1
   fi
-
-  denverInstallDir="$(cd "$DENVER_HOME/.."; pwd)"
 
   echo "Configured:"
   echo "  DENVER_HOME=$DENVER_HOME"
@@ -87,7 +83,7 @@ denver_install_env() {
   wget -qO- \
     https://raw.githubusercontent.com/fiuzagr/env/v2/install.sh | \
     env \
-      ENV_HOME="$denverInstallDir/.env" \
+      ENV_HOME="${DENVER_HOME}/.config" \
       ENV_BRANCH=v2 \
       sh
 }
@@ -103,9 +99,9 @@ denver_install_denver() {
     --quiet \
     --depth=1 \
     --single-branch \
-    -b "$DENVER_BRANCH" \
-    https://github.com/fiuzagr/denver.git "$DENVER_HOME" >/dev/null && \
-      cp $DENVER_HOME/.env.example $DENVER_HOME/.env || \
+    -b "${DENVER_BRANCH}" \
+    https://github.com/fiuzagr/denver.git "${DENVER_HOME}" >/dev/null && \
+      cp ${DENVER_HOME}/.env.example ${DENVER_HOME}/.env || \
       {
         echo "Error: git clone 'fiuzagr/denver' is failed."
         echo
@@ -114,25 +110,25 @@ denver_install_denver() {
 
   # define rc file
   local userShell=$(getent passwd $LOGNAME | cut -d: -f7)
-  local rcFile="$HOME/.profile"
-  rcFile="$(test "${userShell#*zsh}" != "$userShell" && echo "$HOME/.zshrc" || echo $rcFile)" 
-  rcFile="$(test "${userShell#*bash}" != "$userShell" && echo "$HOME/.bashrc" || echo $rcFile)" 
+  local rcFile="${HOME}/.profile"
+  rcFile="$(test "${userShell#*zsh}" != "${userShell}" && echo "${HOME}/.zshrc" || echo $rcFile)" 
+  rcFile="$(test "${userShell#*bash}" != "${userShell}" && echo "${HOME}/.bashrc" || echo $rcFile)" 
 
   # configure rc file
-  if [ -f "$rcFile" ]
+  if [ -f "${rcFile}" ]
   then
-    grep -q "DENVER_HOME" "$rcFile" && \
+    grep -q "DENVER_HOME" "${rcFile}" && \
       echo "Denver is already configured in ${rcFile}." || \
       {
         echo "Configuring ${rcFile} file..."
 
-        echo "\n# Denver" | tee -a "$rcFile"
-        echo "export DENVER_HOME=\"$DENVER_HOME\"" | tee -a "$rcFile"
-        echo '[ -s "$DENVER_HOME/.denver/denver.sh" ] && \. $DENVER_HOME/.denver/denver.sh' | tee -a "$rcFile"
+        echo "\n# Denver" | tee -a "${rcFile}"
+        echo "export DENVER_HOME=\"${DENVER_HOME}\"" | tee -a "${rcFile}"
+        echo '[ -s "$DENVER_HOME/denver.sh" ] && \. $DENVER_HOME/denver.sh' | tee -a "${rcFile}"
       }
   fi
 
-  echo "Installed at $DENVER_HOME."
+  echo "Installed at ${DENVER_HOME}."
   echo
 }
 

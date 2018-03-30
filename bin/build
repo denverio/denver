@@ -5,7 +5,7 @@
 
 denver_build() {
   local project=$(denver util snake ${1})
-  local projectPath="${DENVER_HOME}/$(denver util dash ${1})"
+  local projectPath="${DENVER_HOME}/projects/$(denver util dash ${1})"
   [ $# -ne 0 ] && shift
 
   local argsMsg="without args"

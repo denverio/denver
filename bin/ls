@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+denver_ls() {
+  echo
+  echo "Denver Images"
+  echo "-------------"
+  sudo docker image ls | grep -E "^(REPOSITORY|denver)"
+
+  echo
+  echo "Denver Containers"
+  echo "-----------------"
+  sudo docker container ls | grep -E "(^CONTAINER|denver)"
+
+  echo
+  echo
+}
+denver_ls
+

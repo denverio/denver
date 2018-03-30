@@ -9,7 +9,7 @@ _Creates development environment quickly using docker._
 wget -qO- \
   https://raw.githubusercontent.com/fiuzagr/denver/master/install.sh | \
   env \
-    DENVER_HOME="$HOME/workdir/denver" \
+    DENVER_HOME="$HOME/.denver" \
     DENVER_BRANCH=master \
     sh
 ```
@@ -25,8 +25,8 @@ wget -qO- \
 Clone this repository and insert the code below into your `.bashrc` or `.zshrc`.
 
 ```shell
-export DENVER_HOME="$HOME/workdir/denver"
-[ -s "$DENVER_HOME/.denver/denver.sh" ] && \. $DENVER_HOME/.denver/denver.sh
+export DENVER_HOME="$HOME/.denver"
+[ -s "$DENVER_HOME/denver.sh" ] && \. $DENVER_HOME/denver.sh
 ```
 
 Use the `.env.example` file to create `.env` file. Then, edit `.env` with your

@@ -1,15 +1,6 @@
 #!/usr/bin/env sh
 
-ln -sf /tmux-tpm /app/plugins/tpm 2>/dev/null
-
-if [ "$1" = 'tmux' ]
-then
-  shift
-
-  exec tmux -2 "$@"
-
-  exit 0
-fi
+ln -sf "$HOME/.tpm" /denver/.config/tmux/plugins/tpm 2>/dev/null
 
 if [ "$1" = 'start' ]
 then
@@ -27,7 +18,7 @@ then
     echo "Fetching keys for $user..."
 
     # get and parse user keys
-    KEYS=$(IFS=$'\n' curl https://api.github.com/users/$1/keys | jq '.[].key')
+    KEYS=$(IFS=$'\n' curl https://api.github.com/users/$user/keys | jq '.[].key')
 
     # append the keys to authorized_keys
     IFS=$'\n' 
@@ -38,7 +29,7 @@ then
   done
 
   # start ssh daemon
-  sudo exec /usr/sbin/sshd -Def /etc/ssh/sshd_config
+  /usr/sbin/sshd -Def /etc/ssh/sshd_config
 
   exit 0
 fi

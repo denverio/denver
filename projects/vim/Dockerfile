@@ -103,16 +103,18 @@ COPY rootfs /
 COPY --from=builder /vim*.apk /tmp/vim.apk
 
 RUN \
+# install build deps
+  apk add --no-cache --virtual build-deps gcc python3-dev musl-dev && \
 # install vim package
   apk add --no-cache --allow-untrusted /tmp/vim.apk && \
-# create .vimrc file
-  ln -s /.vimrc /home/denver/.vimrc && \
-  ln -s /.vimrc /root/.vimrc && \
-# force command on ssh login
-  printf "\n\
-Match all\n\
-  ForceCommand env sh -c -e \"cd /workdir; vim\"\n\
-" | tee -a /etc/ssh/sshd_config
+# install vim deps
+  pip3 install --upgrade pip && \
+  pip3 install neovim && \
+# user permission
+  chown -R 1000:1000 "${NON_ROOT_HOME}" && \
+# cleanup
+  apk del build-deps
 
 USER 1000
 WORKDIR /workdir
+CMD ["vim"]
