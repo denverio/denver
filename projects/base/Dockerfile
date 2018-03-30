@@ -65,7 +65,7 @@ WORKDIR /workdir
 ENV USER=${NON_ROOT} \
     HOME=${NON_ROOT_HOME} \
     TERM=xterm-256color \
-    DENVER_HOME=/denver \
+    DENVER_HOME="/denver" \
     DENVER_CONFIG="${DENVER_HOME}/.config"
 
 RUN \

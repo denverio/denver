@@ -36,6 +36,17 @@ configs.
 cp .env.example .env
 ```
 
+Install projects config files inside your denver home:
+
+```shell
+wget -qO- \
+  https://raw.githubusercontent.com/fiuzagr/env/v2/install.sh | \
+  env \
+    ENV_HOME="$DENVER_HOME/.config" \
+    ENV_BRANCH=v2 \
+    sh
+```
+
 ## Use
 
 ### Build project
