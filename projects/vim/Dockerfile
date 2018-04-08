@@ -112,7 +112,7 @@ COPY --from=builder /vim*.apk /tmp/vim.apk
 
 ENV USER="root" \
     HOME="/root" \
-    TERM=xterm-256color \
+    # TERM=xterm-256color \
     DENVER_HOME="/denver" \
     DENVER_CONFIG="/denver/.config"
 

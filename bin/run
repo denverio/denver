@@ -33,7 +33,7 @@ denver_run() {
   [ $# -ne 0 ] && argsMsg="with args $@"
 
   # print environment for project
-  denver printenv ${project}
+  # denver printenv ${project}
 
   echo "Running container \"${project}.denver\""
   echo "  based on image \"denver/${project}\""
@@ -52,6 +52,7 @@ denver_run() {
     -h "${project}.denver" \
     -p ${sshPort}:22 \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /tmp:/tmp \
     -v ${HOST_DENVER_HOME:-$DENVER_HOME}:/denver \
     -v ${volumeWorkdir}:/workdir \
     -v ${volumePrivateKey}:/id_rsa \
