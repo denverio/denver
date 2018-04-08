@@ -1,38 +1,57 @@
-FROM alpine:latest
+FROM ubuntu:latest
 MAINTAINER Fiuza <fiuzagr@gmail.com>
-LABEL description="Denver base (with some tools) on Alpine Linux"
+LABEL description="Denver base (with some tools) on Ubuntu Linux"
 ENTRYPOINT ["/bin/base_entrypoint"]
 EXPOSE 22
 
-COPY rootfs /
-
-ARG NON_ROOT="denver"
-ARG TIMEZONE="UTC"
-ARG LOCALE="en_US.UTF-8"
+ARG TZ="UTC"
+ARG LOCALE="C.UTF-8"
 ARG GIT_USER_NAME
 ARG GIT_USER_EMAIL
 
-ENV NON_ROOT=${NON_ROOT} \
-    NON_ROOT_HOME="/home/${NON_ROOT}" \
+ENV USER="root" \
+    HOME="/root" \
+    TERM=xterm-256color \
+    DENVER_HOME="/denver" \
+    DENVER_CONFIG="/denver/.config" \
+    TZ=${TZ} \
     LANG=${LOCALE} \
     LANGUAGE=${LOCALE} \
-    LC_ALL=${LOCALE}
+    LC_ALL=${LOCALE} \
+    DIND_COMMIT=3b5fac462d21ca164b3778647420016315289034
 
 RUN \
-# build dependencies
-  apk add --no-cache --virtual build-dep \
-    tzdata && \
 # denver dependencies
-  apk add --no-cache --virtual denver-dep \
-    curl openssh findutils diffutils grep bash zsh tmux jq git && \
-# configure ssh
-  ssh-keygen -A && \
-# configure timezone
-  cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
-  echo "${TIMEZONE}" > /etc/TZ && \
-# add non root user
-  adduser -D -s /bin/zsh "${NON_ROOT}" && \
-  passwd -d "${NON_ROOT}" && \
+  apt-get update && \
+  apt-get install -y \
+    --no-install-recommends \
+    alpine \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    git \
+    jq \
+    software-properties-common \
+    ssh \
+    sudo \
+    tmux \
+    wget \
+    zsh && \
+# install docker in docker
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+    | apt-key add - && \
+  add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) \
+    stable" && \
+  apt-get update && \
+  apt-get install -y \
+    docker-ce && \
+  # wget -O /usr/local/bin/dind \
+    # "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind" && \
+  # chmod +x /usr/local/bin/dind && \
+# configure zsh for root
+  chsh -s /bin/zsh root && \
 # add volume dir
   mkdir -p /denver && \
   mkdir -p /workdir && \
@@ -43,7 +62,7 @@ RUN \
     --single-branch \
     -b master \
     https://github.com/robbyrussell/oh-my-zsh.git \
-    "${NON_ROOT_HOME}/.oh-my-zsh" && \
+    "${HOME}/.oh-my-zsh" && \
 # install tpm
   git clone \
     --quiet \
@@ -51,30 +70,18 @@ RUN \
     --single-branch \
     -b master \
     https://github.com/tmux-plugins/tpm.git \
-    "${NON_ROOT_HOME}/.tpm" && \
-# user permission
-  chown -R 1000:1000 "${NON_ROOT_HOME}" && \
-  chown -R 1000:1000 /denver && \
-  chown -R 1000:1000 /workdir && \
-# cleanup
-  apk del build-dep
-
-USER 1000
-WORKDIR /workdir
-
-ENV USER=${NON_ROOT} \
-    HOME=${NON_ROOT_HOME} \
-    TERM=xterm-256color \
-    DENVER_HOME="/denver" \
-    DENVER_CONFIG="/denver/.config"
-
-RUN \
-# user configs
+    "${HOME}/.tpm" && \
+# git configs
   git config --global user.name "${GIT_USER_NAME}" && \
   git config --global user.email "${GIT_USER_EMAIL}" && \
   git config --global init.templatedir "${DENVER_CONFIG}/git/git_template" && \
   git config --global core.excludesfile "${DENVER_CONFIG}/git/.gitignore" && \
-  git config --global include.path "${DENVER_CONFIG}/git/.gitconfig"
+  git config --global include.path "${DENVER_CONFIG}/git/.gitconfig" && \
+# cleanup
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+COPY rootfs /
+WORKDIR /workdir
 VOLUME ["/denver", "/workdir"]
 CMD ["tmux"]

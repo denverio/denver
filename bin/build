@@ -19,7 +19,7 @@ denver_build() {
 
   sudo docker build \
     -t denver/${project} \
-    ${@} \
+    "${@}" \
     ${projectPath}
 }
 denver_build "$@"

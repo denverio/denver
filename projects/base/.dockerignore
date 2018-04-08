@@ -6,3 +6,4 @@
 !./rootfs/**/.*
 
 !Dockerfile
+!Dockerfile.*

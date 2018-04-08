@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 
-ln -sf "$HOME/.tpm" /denver/.config/tmux/plugins/tpm 2>/dev/null
+# link tmux tpm
+ln -sf "$HOME/.tpm" "$DENVER_CONFIG/tmux/plugins/tpm" 2>/dev/null
+
+# exec docker daemon
+# nohup sh "$(which dind)" "dockerd" > /dev/null 2>&1 &
 
 if [ "$1" = 'start' ]
 then
@@ -21,10 +25,11 @@ then
     KEYS=$(IFS=$'\n' curl https://api.github.com/users/$user/keys | jq '.[].key')
 
     # append the keys to authorized_keys
+    touch "$HOME/.ssh/authorized_keys"
     IFS=$'\n' 
     for key in $KEYS
     do
-      sh -c "echo 'command=\"/usr/bin/tmux -2 new -s $user -t pair\" ' $key >> /home/denver/.ssh/authorized_keys"
+      sh -c "echo 'command=\"/usr/bin/tmux -2 new -s $user -t pair\" ' $key >> $HOME/.ssh/authorized_keys"
     done
   done
 

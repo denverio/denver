@@ -16,6 +16,14 @@ denver_util_dash() {
   denver_util_lower "${@}" | tr '_' '-' | tr ' ' '-'
 }
 
+denver_util_ext() {
+  denver_util_lower "${@}" | sed 's/(\..*)$/\1/'
+}
+
+denver_util_project() {
+  denver_util_snake "${@}" | sed 's/^([^\.]*)$/\1/'
+}
+
 denver_util() {
   local command=$(denver_util_snake "$1")
 

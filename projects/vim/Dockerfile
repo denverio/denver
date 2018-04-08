@@ -1,32 +1,33 @@
 FROM alpine:latest AS builder
 
-ENV COMPILED_BY="fiuzagr"
-ENV BUILD_DIR /tmp/vim
-ENV INSTALL_DIR /vim
-ENV VIM_FILES ${INSTALL_DIR}/usr/local/share/vim/vimfiles
-ENV RUBY_COMMAND /usr/bin/ruby
-ENV PYTHON_CONFIG_DIR /usr/lib/python2.7/config
-ENV PYTHON3_CONFIG_DIR /usr/lib/python3.6/config-3.6m-x86_64-linux-gnu
+ENV COMPILED_BY="fiuzagr" \
+    BUILD_DIR=/tmp/vim \
+    INSTALL_DIR=/vim \
+    VIM_FILES=/vim/usr/local/share/vim/vim80 \
+    RUBY_COMMAND=/usr/bin/ruby \
+    PYTHON_CONFIG_DIR=/usr/lib/python2.7/config \
+    PYTHON3_CONFIG_DIR=/usr/lib/python3.6/config-3.6m-x86_64-linux-gnu
+
 ENV PACKAGES="\
-  build-base \
-  curl \
-  git \
-  gnupg \
-  libffi \
-  libffi-dev \
-  libx11-dev \
-  libxpm-dev \
-  libxt-dev \
-  lua-dev \
-  luajit-dev \
-  make \
-  ncurses-dev \
-  perl-dev \
-  python-dev \
-  python3-dev \
-  ruby \
-  ruby-dev \
-  tar \
+build-base \
+curl \
+git \
+gnupg \
+libffi \
+libffi-dev \
+libx11-dev \
+libxpm-dev \
+libxt-dev \
+lua-dev \
+luajit-dev \
+make \
+ncurses-dev \
+perl-dev \
+python-dev \
+python3-dev \
+ruby \
+ruby-dev \
+tar \
 "
 
 RUN \
@@ -35,7 +36,11 @@ RUN \
   gem update --no-ri --no-rdoc --system && \
   gem install --no-ri --no-rdoc fpm && \
 # clone vim repo
-  git clone --depth 1 \
+  git clone \
+    --quiet \
+    --depth=1 \
+    --single-branch \
+    -b master \
     https://github.com/vim/vim ${BUILD_DIR} && \
   cd ${BUILD_DIR} && \
   VIM_VERSION=$(git describe --abbrev=0 --tags) && \
@@ -68,8 +73,10 @@ RUN \
 # install vim-plug
   mkdir -p ${VIM_FILES}/autoload && \
   chown -R 755 ${VIM_FILES} && \
-  curl -fLo ${VIM_FILES}/autoload/plug.vim \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
+  echo "Downloading vim-plug..." && \
+  curl -SL --progress-bar \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
+    --output ${VIM_FILES}/autoload/plug.vim && \
 # generate vim package
   fpm \
     --input-type dir \
@@ -90,32 +97,54 @@ RUN \
     --depends python \
     --depends python3 \
     --depends ruby \
+    --depends nodejs \
+    --depends findutils \
+    --depends diffutils \
+    --depends openjdk8-jre \
     . && \
   mv *.apk /
 
-FROM denver/base:latest
+FROM alpine:latest
 MAINTAINER Fiuza <fiuzagr@gmail.com>
 LABEL description="Latest Vim from source (+python +python3 +ruby +lua +perl) with vim-plug on Alpine Linux"
-ENTRYPOINT ["/bin/vim_entrypoint"]
 
-USER 0
-COPY rootfs /
 COPY --from=builder /vim*.apk /tmp/vim.apk
+
+ENV USER="root" \
+    HOME="/root" \
+    TERM=xterm-256color \
+    DENVER_HOME="/denver" \
+    DENVER_CONFIG="/denver/.config"
 
 RUN \
 # install build deps
-  apk add --no-cache --virtual build-deps gcc python3-dev musl-dev && \
+  apk add --no-cache --virtual build-deps \
+    build-base make gcc python3-dev musl-dev ruby-dev curl && \
 # install vim package
   apk add --no-cache --allow-untrusted /tmp/vim.apk && \
-# install vim deps
+# update pip, gem and npm
   pip3 install --upgrade pip && \
+  gem update --no-ri --no-rdoc --system && \
+  npm install -g npm@latest && \
+# install vim deps
   pip3 install neovim && \
-# user permission
-  chown -R 1000:1000 "${NON_ROOT_HOME}" && \
+# install some linters
+  # js based
+  npm install -g eslint prettier prettier-standard stylelint alex sonarjs && \
+  # python based
+  pip3 install vim-vint proselint gitlint && \
+  # ruby based
+  gem install --no-ri --no-rdoc sqlint && \
+  # kotlin
+  echo "Downloading ktlint..." && \
+  curl -SL --progress-bar \
+    https://github.com/shyiko/ktlint/releases/download/0.20.0/ktlint \
+    --output /usr/local/bin/ktlint && \
+  chmod a+x /usr/local/bin/ktlint && \
 # cleanup
   rm -rf /tmp/vim.apk && \
   apk del build-deps
 
-USER 1000
+COPY rootfs /
 WORKDIR /workdir
 CMD ["vim"]

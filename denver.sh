@@ -3,6 +3,7 @@
 rootPath=$(cd -P -- "$(dirname -- "$0")/.." && printf '%s\n' "$(pwd -P)")
 
 export DENVER_HOME=${DENVER_HOME:-$rootPath}
+export DENVER_CONFIG="$DENVER_HOME/.config"
 export DENVER_BIN_PATH="$DENVER_HOME/bin"
 export DENVER_RC="$DENVER_HOME/denver.sh"
 

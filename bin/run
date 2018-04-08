@@ -22,8 +22,8 @@ denver_run() {
 
   local defaultCommand="$(denver var ${project} default-command)"
   local sshPort="$(denver var ${project} ssh-port)"
-  local volumeApp="$(denver var ${project} volume-app)"
   local volumeWorkdir="$(denver var ${project} volume-workdir)"
+  local volumePrivateKey="$(denver var ${project} volume-private-key)"
   local runArgs="$(denver var ${project} run-args)"
 
   local cmd=${1:-$defaultCommand}
@@ -48,10 +48,15 @@ denver_run() {
     --rm \
     --name "${project}.denver" \
     --network ${network} \
+    --privileged \
     -h "${project}.denver" \
     -p ${sshPort}:22 \
-    -v ${DENVER_HOME}:/denver \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v ${HOST_DENVER_HOME:-$DENVER_HOME}:/denver \
     -v ${volumeWorkdir}:/workdir \
+    -v ${volumePrivateKey}:/id_rsa \
+    -e HOST_HOME="${HOST_HOME:-$HOME}" \
+    -e HOST_DENVER_HOME="${HOST_DENVER_HOME:-$DENVER_HOME}" \
     ${runArgs} \
     ${DE_RUN_ARGS} \
     denver/${project} \
