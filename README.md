@@ -1,3 +1,9 @@
+# DEPRECATED
+
+This project is abandoned in favor of [Îagûara](https://github.com/iaguara/iaguara).
+
+---
+
 # Denver
 
 _Creates development environment quickly using docker._
